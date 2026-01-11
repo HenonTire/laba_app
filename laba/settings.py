@@ -15,7 +15,16 @@ if not SECRET_KEY:
 
 DEBUG = os.getenv("DEBUG") 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'laba-app-1.onrender.com',
+    '.onrender.com',
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://laba-app-1.onrender.com',
+    'https://*.onrender.com',
+]
+
 
 
 
