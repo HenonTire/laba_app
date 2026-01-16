@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 
 class Status(models.TextChoices):
         TODO = 'todo', 'To Do'
@@ -31,4 +31,11 @@ class Tasks(models.Model):
     priority = models.IntegerField(choices=Priority.choices, default=Priority.MEDIUM)
     due_date = models.DateField()
     dadeline = models.DateField()
+    user = models.ForeignKey(User, related_name='tasks', on_delete=models.CASCADE)
     project = models.ManyToManyField(Projects, related_name='projects', blank=True, null=True)
+class Plans(models.Model):
+    plan_name = models.CharField(max_length=30)
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    tasks = models.ForeignKey(Tasks, related_name='plans', on_delete=models.CASCADE)

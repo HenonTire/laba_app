@@ -5,11 +5,29 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 
-class TaskSerializer(ModelSerializer):
+class UserSerializer(ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'email', 'password')
+
+    def create(self, validated_data):
+        user = User(
+            username=validated_data['username'],
+            email=validated_data.get('email')
+        )
+        user.set_password(validated_data['password'])  # 🔐 HASHING
+        user.save()
+        return user
+
+class TaskSerializer(serializers.ModelSerializer):
+    user = UserSerializer(many=False)
     class Meta:
         model = Tasks
-        fields = '__all__'
+        fields = ['user', 'id', 'task_name', 'status', 'priority', 'due_date', 'dadeline', 'project']
         read_only_fields = ['id']
+    
 
 class ProjectSerializer(ModelSerializer):
     class Meta:
