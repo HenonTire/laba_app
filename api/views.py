@@ -11,6 +11,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 
 class LoginView(APIView):
     prmission_classes = [AllowAny]
+    authentication_classes = [] 
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
