@@ -6,7 +6,7 @@ response = requests.post(
     url,
     json={
         "username": "henon",
-        "password": "testing321"
+        "password": "Henon@12"
     }
 )
 

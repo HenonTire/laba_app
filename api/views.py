@@ -18,34 +18,34 @@ class LoginView(APIView):
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
 class UserView(RetrieveUpdateDestroyAPIView):
-    permission_classes = ["IsAuthenticated"]
+    permission_classes = []
     queryset = User.objects.all()
     
     serializer_class = UserSerializer
 
 class CreateTask(ListCreateAPIView):
-    permission_classes = ["IsAuthenticated"]
+    permission_classes = [IsAuthenticated]
     queryset = Tasks.objects.all()
     serializer_class = TaskSerializer
 
 class TaskDetail(RetrieveUpdateDestroyAPIView):
-    permission_classes = ["IsAuthenticated"]
+    permission_classes = [IsAuthenticated]
     queryset = Tasks.objects.all()
     serializer_class = TaskSerializer
 
 class CreateProject(ListCreateAPIView):
-    permission_classes = ["IsAuthenticated"]
+    permission_classes = [IsAuthenticated]
 
     queryset = Projects.objects.all()
     serializer_class = ProjectSerializer
 
 class ProjectDetail(RetrieveUpdateDestroyAPIView): 
-    permission_classes = ["IsAuthenticated"]
+    permission_classes = [IsAuthenticated]
     queryset = Projects.objects.all()
     serializer_class = ProjectSerializer
 
 class UserDetail(RetrieveUpdateDestroyAPIView):
-    permission_classes = ["IsAuthenticated"]
+    permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
