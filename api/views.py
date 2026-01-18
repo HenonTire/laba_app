@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from .models import Tasks, Projects
-from .serializer import TaskSerializer, ProjectSerializer, UserSerializer, LoginSerializer
+from .models import Tasks, Projects, Plans
+from .serializer import TaskSerializer, ProjectSerializer, UserSerializer, LoginSerializer, PlansSerializer
 from django.contrib.auth.models import User
 from rest_framework.views import APIView 
 from rest_framework import status
@@ -51,3 +51,14 @@ class UserDetail(RetrieveUpdateDestroyAPIView):
 
 # q9gKngQ7pHiWsKwd
 # Henon@12
+
+
+class PlansList(ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Plans.objects.all()
+    serializer_class = PlansSerializer
+
+class PlanDetail(RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Plans.objects.all()
+    serializer_class = PlansSerializer

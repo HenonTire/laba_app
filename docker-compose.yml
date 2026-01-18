@@ -6,6 +6,8 @@ services:
     container_name: laba_api
     env_file:
       - laba/.env
+    environment:
+      PORT: 8000
     ports:
       - "8000:8000"
     restart: always

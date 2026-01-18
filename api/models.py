@@ -17,7 +17,9 @@ class Priority(models.IntegerChoices):
 
 
 class Projects(models.Model):
+
     project_name = models.CharField(max_length=30) 
+    description = models.TextField(max_length=500)
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.TODO)
     priority = models.IntegerField(choices=Priority.choices, default=Priority.MEDIUM)
     start_date = models.DateField()
@@ -27,6 +29,7 @@ class Projects(models.Model):
 
 class Tasks(models.Model):
     task_name = models.CharField(max_length=30) 
+    description = models.TextField(max_length=500)
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.TODO)
     priority = models.IntegerField(choices=Priority.choices, default=Priority.MEDIUM)
     due_date = models.DateField()
@@ -35,7 +38,7 @@ class Tasks(models.Model):
     project = models.ManyToManyField(Projects, related_name='projects', blank=True, null=True)
 class Plans(models.Model):
     plan_name = models.CharField(max_length=30)
-    description = models.TextField()
+    description = models.TextField(max_length=500)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     tasks = models.ForeignKey(Tasks, related_name='plans', on_delete=models.CASCADE)

@@ -88,3 +88,10 @@ class LoginSerializer(serializers.Serializer):
 #     "password": "testing321",  
 #     "email": "henontireso@gmail.com"
 # }
+
+class PlansSerializer(ModelSerializer):
+    tasks = TaskSerializer(many=False)
+    class Meta:
+        model = Plans
+        fields = '__all__'
+        read_only_fields = ['id']

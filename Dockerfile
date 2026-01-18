@@ -5,13 +5,12 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-# Install Python deps only
+# Install dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy project files
+# Copy project
 COPY . .
 
-# Run collectstatic at runtime + start server
-CMD python manage.py collectstatic --noinput && \
-    gunicorn laba.wsgi:application --bind 0.0.0.0:$PORT
+# Run server (fallback port if PORT is missing)
+CMD ["sh", "-c", "gunicorn laba.wsgi:application --bind 0.0.0.0:${PORT:-8000}"]
