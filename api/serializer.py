@@ -21,20 +21,21 @@ class UserSerializer(ModelSerializer):
         user.save()
         return user
 
-class TaskSerializer(serializers.ModelSerializer):
-    user = UserSerializer(many=False)
-    class Meta:
-        model = Tasks
-        fields = ['user', 'id', 'task_name', 'status', 'priority', 'due_date', 'dadeline', 'project']
-        read_only_fields = ['id']
-    
+
 
 class ProjectSerializer(ModelSerializer):
     class Meta:
         model = Projects
         fields = '__all__'
         read_only_fields = ['id']
-
+class TaskSerializer(serializers.ModelSerializer):
+    user = UserSerializer(many=False)
+    project = ProjectSerializer(many=True, read_only=True)
+    class Meta:
+        model = Tasks
+        fields = '__all__'
+        read_only_fields = ['id']
+    
 
 
 
