@@ -23,18 +23,59 @@ class UserSerializer(ModelSerializer):
 
 
 
-class ProjectSerializer(ModelSerializer):
+from rest_framework import serializers
+from .models import Tasks, Projects
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+
+class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Projects
-        fields = '__all__'
-        read_only_fields = ['id']
+        fields = "__all__"
+        read_only_fields = ["id"]
+
+
 class TaskSerializer(serializers.ModelSerializer):
-    user = UserSerializer(many=False)
+    # 🔁 nested output only (read-only)
+    user = serializers.StringRelatedField(read_only=True)
     project = ProjectSerializer(many=True, read_only=True)
+
+    # ⬇️ input-only field for project IDs
+    project_ids = serializers.ListField(
+        child=serializers.IntegerField(),
+        write_only=True,
+        required=False,
+    )
+
     class Meta:
         model = Tasks
-        fields = '__all__'
-        read_only_fields = ['id']
+        fields = "__all__"
+        read_only_fields = ["id", "user"]
+
+    def create(self, validated_data):
+        request = self.context.get("request")
+
+        if request is None or request.user.is_anonymous:
+            raise serializers.ValidationError("Authentication required.")
+
+        # ✅ take user from request, not payload
+        user = request.user
+
+        # ⬇️ pop project_ids before model creation
+        project_ids = validated_data.pop("project_ids", [])
+
+        # ✅ create task with request.user
+        task = Tasks.objects.create(user=user, **validated_data)
+
+        # ✅ attach projects (many-to-many)
+        if project_ids:
+            projects = Projects.objects.filter(id__in=project_ids)
+            task.project.set(projects)
+
+        return task
+
     
 
 
