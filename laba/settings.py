@@ -157,7 +157,7 @@ SIMPLE_JWT = {
 
 ASGI_APPLICATION = "config.asgi.application"
 
-REDIS_URL = "https://valued-midge-53518.upstash.io"
+REDIS_URL = "rediss://default:AdEOAAIncDFlZWY5NjBmMDU1ZmQ0NzFlYTA0NmFmMzViYTQ2YjFiOHAxNTM1MTg@valued-midge-53518.upstash.io:6379"
 
 CHANNEL_LAYERS = {
     "default": {
