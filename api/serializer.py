@@ -136,3 +136,10 @@ class PlansSerializer(ModelSerializer):
         model = Plans
         fields = '__all__'
         read_only_fields = ['id']
+
+class NotesSerializer(ModelSerializer):
+    user = serializers.StringRelatedField(read_only=True)
+    class Meta:
+        model = Notes
+        fields = '__all__'
+        read_only_fields = ['id', 'user']

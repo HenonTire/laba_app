@@ -42,3 +42,10 @@ class Plans(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     tasks = models.ForeignKey(Tasks, related_name='plans', on_delete=models.CASCADE)
+
+class Notes(models.Model):
+    note_title = models.CharField(max_length=100)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey(User, related_name='notes', on_delete=models.CASCADE)

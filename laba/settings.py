@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "api",
     'rest_framework_simplejwt',
     'rest_framework.authtoken',
+    "chat"
 ]
 
 MIDDLEWARE = [
@@ -149,5 +150,31 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'AUTH_HEADER_TYPES': ('Bearer',),
+}
+
+
+
+
+ASGI_APPLICATION = "config.asgi.application"
+
+REDIS_URL = "https://valued-midge-53518.upstash.io"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [REDIS_URL],
+        },
+    },
+}
+
+CACHES = {
+  "default": {
+    "BACKEND": "django_redis.cache.RedisCache",
+    "LOCATION": REDIS_URL,
+    "OPTIONS": {
+      "CLIENT_CLASS": "django_redis.client.DefaultClient",
+    }
+  }
 }
 
