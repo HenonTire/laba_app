@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     "api",
     'rest_framework_simplejwt',
     'rest_framework.authtoken',
-    "chat"
+    "chat",
+    "channels",
 ]
 
 MIDDLEWARE = [
@@ -155,7 +156,7 @@ SIMPLE_JWT = {
 
 
 
-ASGI_APPLICATION = "config.asgi.application"
+ASGI_APPLICATION = "laba.asgi.application"
 
 REDIS_URL = "rediss://default:AdEOAAIncDFlZWY5NjBmMDU1ZmQ0NzFlYTA0NmFmMzViYTQ2YjFiOHAxNTM1MTg@valued-midge-53518.upstash.io:6379"
 
