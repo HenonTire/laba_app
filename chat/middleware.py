@@ -1,51 +1,56 @@
-import jwt
+# chat/middleware.py
 from urllib.parse import parse_qs
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AnonymousUser
+from channels.db import database_sync_to_async
+from rest_framework_simplejwt.tokens import UntypedToken
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+from django.conf import settings
+import jwt
+
+User = get_user_model()
+
 
 class JwtAuthMiddleware:
     def __init__(self, inner):
         self.inner = inner
 
     async def __call__(self, scope, receive, send):
-        # 🔁 Lazy imports (CRITICAL FIX)
-        from django.conf import settings
-        from django.contrib.auth import get_user_model
-        from rest_framework_simplejwt.tokens import UntypedToken
-        from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+        query_string = scope["query_string"].decode()
+        params = parse_qs(query_string)
 
-        User = get_user_model()
+        token = params.get("token")
+        if not token:
+            scope["user"] = AnonymousUser()
+            return await self.inner(scope, receive, send)
 
-        query_string = scope.get("query_string", b"").decode()
-        query_params = parse_qs(query_string)
+        token = token[0]
 
-        token = None
-        if "token" in query_params:
-            token = query_params["token"][0]
+        try:
+            # Validate token signature & expiry
+            UntypedToken(token)
 
-        scope["user"] = None
+            decoded = jwt.decode(
+                token,
+                settings.SECRET_KEY,
+                algorithms=["HS256"],
+            )
 
-        if token:
-            try:
-                # Validate token
-                UntypedToken(token)
+            user_id = decoded.get("user_id")
+            if not user_id:
+                scope["user"] = AnonymousUser()
+            else:
+                scope["user"] = await self.get_user(user_id)
 
-                decoded = jwt.decode(
-                    token,
-                    settings.SECRET_KEY,
-                    algorithms=["HS256"],
-                )
-
-                user_id = decoded.get("user_id")
-                scope["user"] = await self.get_user(User, user_id)
-
-            except (InvalidToken, TokenError, jwt.DecodeError) as e:
-                print("❌ JWT WS auth failed:", e)
-                scope["user"] = None
+        except (InvalidToken, TokenError, jwt.PyJWTError) as e:
+            print("❌ JWT WS auth failed:", str(e))
+            scope["user"] = AnonymousUser()
 
         return await self.inner(scope, receive, send)
 
-    @staticmethod
-    async def get_user(User, user_id):
+    @database_sync_to_async
+    def get_user(self, user_id):
         try:
             return User.objects.get(id=user_id)
         except User.DoesNotExist:
-            return None
+            return AnonymousUser()
