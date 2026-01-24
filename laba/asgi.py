@@ -1,20 +1,16 @@
 import os
-import django
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "laba.settings")
 
 from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter
-from channels.auth import AuthMiddlewareStack
+from chat.routing import websocket_urlpatterns
+from chat.middleware import JwtAuthMiddleware
 
-# 👇 MUST come before any Django imports that touch settings
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "laba.settings")
-
-django.setup()
-
-from chat.routing import websocket_urlpatterns  # noqa: E402
+django_asgi_app = get_asgi_application()
 
 application = ProtocolTypeRouter({
-    "http": get_asgi_application(),
-    "websocket": AuthMiddlewareStack(
+    "http": django_asgi_app,
+    "websocket": JwtAuthMiddleware(
         URLRouter(websocket_urlpatterns)
     ),
 })
