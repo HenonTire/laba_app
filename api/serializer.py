@@ -4,6 +4,12 @@ from .models import *
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework import serializers
+from .models import Tasks, Projects
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
 
 class UserSerializer(ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -21,13 +27,6 @@ class UserSerializer(ModelSerializer):
         user.save()
         return user
 
-
-
-from rest_framework import serializers
-from .models import Tasks, Projects
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
 
 
 class ProjectSerializer(serializers.ModelSerializer):
