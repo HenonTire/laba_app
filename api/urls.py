@@ -12,5 +12,6 @@ urlpatterns = [
     path('plans/', PlansList.as_view(), name='plans_list'),
     path('plans/<int:pk>/', PlanDetail.as_view(), name='plan_detail'),
     path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('projects/<int:project_id>/tasks/', TasksByProjectView.as_view()),
     # ccCC
 ]

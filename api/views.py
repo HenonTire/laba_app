@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from .models import Tasks, Projects, Plans, Notes
 from .serializer import NotesSerializer, TaskSerializer, ProjectSerializer, UserSerializer, LoginSerializer, PlansSerializer
 from django.contrib.auth.models import User
@@ -70,3 +70,16 @@ class NoteDetail(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Notes.objects.all()
     serializer_class = NotesSerializer
+
+
+class TasksByProjectView(ListAPIView):
+    serializer_class = TaskSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+     project_id = self.kwargs['project_id']
+     return Tasks.objects.filter(
+        project__id=project_id,
+        user=self.request.user
+    )
+
