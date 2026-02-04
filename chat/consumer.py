@@ -1,7 +1,12 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.db import database_sync_to_async
+
+from .models import ChatRoom, Message
+
 
 class ChatConsumer(AsyncWebsocketConsumer):
+
     async def connect(self):
         self.room_id = self.scope["url_route"]["kwargs"]["room_id"]
         self.room_group_name = f"chat_{self.room_id}"
@@ -14,6 +19,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
             return
 
         self.user = user
+
+        # ✅ Make sure room exists
+        self.room = await self.get_room(self.room_id)
 
         await self.channel_layer.group_add(
             self.room_group_name,
@@ -33,20 +41,43 @@ class ChatConsumer(AsyncWebsocketConsumer):
         data = json.loads(text_data)
         message = data.get("message")
 
-        # Never trust client sender_id
-        sender_id = self.user.id
-        sender_username = self.user.username
+        if not message:
+            return
 
+        # ✅ Save message in DB
+        saved_message = await self.save_message(
+            room=self.room,
+            sender=self.user,
+            content=message
+        )
+
+        # ✅ Broadcast message to group
         await self.channel_layer.group_send(
             self.room_group_name,
             {
                 "type": "chat_message",
-                "message": message,
-                "sender_id": sender_id,
-                "sender_username": sender_username,
+                "message": saved_message.content,
+                "sender_id": self.user.id,
+                "sender_username": self.user.username,
+                "created_at": str(saved_message.created_at),
             }
         )
 
     async def chat_message(self, event):
         await self.send(text_data=json.dumps(event))
 
+    # -----------------------------
+    # ✅ Database helper functions
+    # -----------------------------
+
+    @database_sync_to_async
+    def get_room(self, room_id):
+        return ChatRoom.objects.get(id=room_id)
+
+    @database_sync_to_async
+    def save_message(self, room, sender, content):
+        return Message.objects.create(
+            room=room,
+            sender=sender,
+            content=content
+        )
