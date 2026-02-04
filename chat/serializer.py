@@ -9,10 +9,7 @@ class MessageSerializer(serializers.ModelSerializer):
         model = Message
         fields = [
             "id",
-            "room",
-            "sender",
             "sender_username",
             "content",
             "created_at",
         ]
-        read_only_fields = ["id", "sender", "created_at"]

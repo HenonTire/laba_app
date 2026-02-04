@@ -1,17 +1,12 @@
-
-# Create your views here.
 from rest_framework import generics, permissions
 from .models import Message
 from .serializer import MessageSerializer
 
 
-class RoomMessageListView(generics.ListAPIView):
+class GlobalMessageListView(generics.ListAPIView):
     serializer_class = MessageSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        room_id = self.kwargs["room_id"]
+        return Message.objects.filter(room_id=1).order_by("created_at")
 
-        return Message.objects.filter(
-            room_id=room_id
-        ).order_by("created_at")
