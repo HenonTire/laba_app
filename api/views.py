@@ -66,6 +66,8 @@ class NotesList(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Notes.objects.all()
     serializer_class = NotesSerializer
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 class NoteDetail(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Notes.objects.all()
