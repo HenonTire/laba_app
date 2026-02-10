@@ -1,12 +1,14 @@
 from django.shortcuts import render
+import rest_framework
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from .models import Tasks, Projects, Plans, Notes
-from .serializer import NotesSerializer, TaskSerializer, ProjectSerializer, UserSerializer, LoginSerializer, PlansSerializer
+from .serializer import NotesSerializer, TaskSerializer, ProjectSerializer, UserSerializer, LoginSerializer, PlansSerializer, CountSerializer
 from django.contrib.auth.models import User
 from rest_framework.views import APIView 
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes
 # Create your views here.
 
 class LoginView(APIView):
@@ -88,19 +90,17 @@ class TasksByProjectView(ListAPIView):
 
 
 # api/views.py
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
 
-from .models import Project, Task, Plans
-from .serializer import CountSerializer
+
+
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def stats_view(request):
-    total_projects = Project.objects.count()
-    total_tasks = Task.objects.count()
-    total_done_tasks = Task.objects.filter(status='done').count()
+    total_projects = Projects.objects.count()
+    total_tasks = Tasks.objects.count()
+    total_done_tasks = Tasks.objects.filter(status='done').count()
     total_plans = Plans.objects.count()
 
     data = {
