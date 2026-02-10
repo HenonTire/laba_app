@@ -85,3 +85,30 @@ class TasksByProjectView(ListAPIView):
         user=self.request.user
     )
 
+
+
+# api/views.py
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+
+from .models import Project, Task, Plans
+from .serializer import CountSerializer
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def stats_view(request):
+    total_projects = Project.objects.count()
+    total_tasks = Task.objects.count()
+    total_done_tasks = Task.objects.filter(status='done').count()
+    total_plans = Plans.objects.count()
+
+    data = {
+        "total_projects": total_projects,
+        "total_tasks": total_tasks,
+        "total_done_tasks": total_done_tasks,
+        "total_plans": total_plans,
+    }
+
+    serializer = CountSerializer(data)
+    return Response(serializer.data)

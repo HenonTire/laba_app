@@ -41,7 +41,7 @@ class Plans(models.Model):
     description = models.TextField(max_length=500)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    tasks = models.ForeignKey(Tasks, related_name='plans', on_delete=models.CASCADE, null=True, blank=True)
+    tasks = models.ForeignKey(Tasks, related_name='plans', on_delete=models.SET_NULL, null=True, blank=True)
 
 class Notes(models.Model):
     note_title = models.CharField(max_length=100)

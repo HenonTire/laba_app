@@ -147,3 +147,9 @@ class NotesSerializer(ModelSerializer):
         model = Notes
         fields = '__all__'
         read_only_fields = ['id', 'user']
+
+class CountSerializer(serializers.Serializer):
+    total_projects = serializers.IntegerField()
+    total_tasks = serializers.IntegerField()
+    total_done_tasks = serializers.IntegerField()
+    total_plans = serializers.IntegerField()
