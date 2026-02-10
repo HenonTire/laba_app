@@ -130,27 +130,17 @@ class LoginSerializer(serializers.Serializer):
 # }
 
 class PlansSerializer(serializers.ModelSerializer):
-    # ✅ Make tasks optional / nullable
-    tasks = TaskSerializer(many=False, required=False, allow_null=True)
+    # ✅ Use task ID, allow null
+    tasks = serializers.PrimaryKeyRelatedField(
+        queryset=Tasks.objects.all(),
+        required=False,  # optional
+        allow_null=True, # nullable
+    )
 
     class Meta:
         model = Plans
         fields = '__all__'
         read_only_fields = ['id']
-
-    def create(self, validated_data):
-        # ✅ Pop the tasks if exists
-        task_data = validated_data.pop('tasks', None)
-        
-        plan = Plans.objects.create(**validated_data)
-
-        if task_data:
-            # link task if provided
-            plan.tasks = Tasks.objects.get(id=task_data['id'])
-            plan.save()
-
-        return plan
-
 class NotesSerializer(ModelSerializer):
     user = serializers.StringRelatedField(read_only=True)
     class Meta:
