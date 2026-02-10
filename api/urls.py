@@ -13,5 +13,7 @@ urlpatterns = [
     path('plans/<int:pk>/', PlanDetail.as_view(), name='plan_detail'),
     path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('projects/<int:project_id>/tasks/', TasksByProjectView.as_view()),
+    path('notes/', NotesList.as_view(), name='notes_list'),
+    path('notes/<int:pk>/', NoteDetail.as_view(), name='note_detail')
     # ccCC
 ]
